@@ -130,7 +130,6 @@ func (paging *pagingQuery) Aggregate(filters ...interface{}) (paginatedData *Pag
 	// making facet aggregation pipeline for result and total document count
 	facet := bson.M{"$facet": bson.M{
 		"data": []bson.M{
-			{"$sort": bson.M{"createdAt": -1}},
 			{"$skip": skip},
 			{"$limit": paging.LimitCount},
 		},
