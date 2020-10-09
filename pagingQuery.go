@@ -155,12 +155,12 @@ func (paging *pagingQuery) Aggregate(filters ...interface{}) (paginatedData *Pag
 		}
 	}
 
-	var data []bson.Raw
+	var data *mongo.Cursor
 	var aggCount int64
 
 	if len(docs) > 0 && len(docs[0].Data) > 0 {
 		aggCount = docs[0].Total[0].Count
-		data = docs[0].Data
+		data = cursor
 	}
 	paginationInfoChan := make(chan *Paginator, 1)
 	Paging(paging, paginationInfoChan, true, aggCount)
@@ -204,17 +204,11 @@ func (paging *pagingQuery) Find() (paginatedData *PaginatedData, err error) {
 		return nil, err
 	}
 	defer cursor.Close(context.Background())
-	var docs []bson.Raw
-	for cursor.Next(context.Background()) {
-		var document *bson.Raw
-		if err := cursor.Decode(&document); err == nil {
-			docs = append(docs, *document)
-		}
-	}
+
 	paginationInfo := <-paginationInfoChan
 	result := PaginatedData{
 		Pagination: *paginationInfo.PaginationData(),
-		Data:       docs,
+		Data:       cursor,
 	}
 	return &result, nil
 }
@@ -222,7 +216,7 @@ func (paging *pagingQuery) Find() (paginatedData *PaginatedData, err error) {
 // PaginatedData struct holds data and
 // pagination detail
 type PaginatedData struct {
-	Data       []bson.Raw     `json:"data"`
+	Data       *mongo.Cursor  `json:"data"`
 	Pagination PaginationData `json:"pagination"`
 }
 
