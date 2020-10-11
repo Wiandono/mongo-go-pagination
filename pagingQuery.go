@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"log"
 )
 
 // Error constants
@@ -204,13 +205,13 @@ func (paging *pagingQuery) Find() (paginatedData *PaginatedData, err error) {
 		return nil, err
 	}
 
+	log.Println(cursor)
+
 	paginationInfo := <-paginationInfoChan
 	result := PaginatedData{
 		Pagination: *paginationInfo.PaginationData(),
 		Data:       cursor,
 	}
-
-	defer cursor.Close(context.Background())
 
 	return &result, nil
 }
