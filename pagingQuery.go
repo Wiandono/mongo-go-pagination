@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"log"
 )
 
 // Error constants
@@ -203,6 +204,9 @@ func (paging *pagingQuery) Find() (findData *FindData, err error) {
 	if err != nil {
 		return nil, err
 	}
+
+	log.Println(cursor.Current)
+	log.Println(cursor.Current.String())
 
 	defer cursor.Close(context.Background())
 	var docs []bson.Raw
