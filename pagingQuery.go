@@ -203,13 +203,15 @@ func (paging *pagingQuery) Find() (paginatedData *PaginatedData, err error) {
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(context.Background())
 
 	paginationInfo := <-paginationInfoChan
 	result := PaginatedData{
 		Pagination: *paginationInfo.PaginationData(),
 		Data:       cursor,
 	}
+
+	defer cursor.Close(context.Background())
+
 	return &result, nil
 }
 

@@ -75,7 +75,7 @@ func TestPagingQuery_Find(t *testing.T) {
 		return
 	}
 
-	if len(paginatedData.Data) < 1 {
+	if paginatedData.Data == nil {
 		t.Errorf("Error fetching data")
 	}
 
